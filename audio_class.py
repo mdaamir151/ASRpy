@@ -4,13 +4,15 @@ import numpy as np
 from sklearn.neural_network import MLPClassifier
 import wave
 
+from sklearn import svm
 
 class AudioClassifier:
 	
-	def __init__(self,ws=256,nfilt=30):
+	def __init__(self,ws=256,nfilt=30,stride=128):
 		self.__ws__ = ws
 		self.__nfilt__ = nfilt
 		self.__highfreq__ = None
+		self.__stride__ = stride
 
 	def read(self,file):
 		(rate,sig) = wav.read(file)
@@ -32,7 +34,7 @@ class AudioClassifier:
 		return minfr
 
 	def SpecPowerVec(self, sig, samprate, n=None):
-		pspec = fn.spectral_power(sig, ws=self.__ws__, n=n)
+		pspec = fn.spectral_power(sig,stride=self.__stride__, ws=self.__ws__, n=n)
 		bins = fn.mel_bins(nfilt=self.__nfilt__, samprate=samprate,ws=self.__ws__, highfreq=self.__highfreq__)
 		pr = fn.mel_filter_power(pspec,bins)
 		return pr,len(pspec)
@@ -42,6 +44,8 @@ class AudioClassifier:
 			self.__highfreq__ = highfreq
 		else: 
 			self.__highfreq__ = self.minframerate(files) // 2
+
+		self.__nclasses__ = len(files)
 		
 		print("high freq limit set at {} Hz".format(self.__highfreq__))
 		
@@ -75,7 +79,8 @@ class AudioClassifier:
 		return train_feat, train_class, test_feat, test_class
 
 	def train(self,feat,targClass):
-		self.__clf__ = MLPClassifier(solver='lbfgs', alpha = 0.000001, random_state=1)
+		self.__clf__ = MLPClassifier(solver='lbfgs', alpha = 0.00001, random_state=1,hidden_layer_sizes=(self.__nclasses__*4,self.__nclasses__*4))
+		# self.__clf__ = svm.SVC(kernel='rbf')
 		self.__clf__.fit(feat,targClass)
 
 	def predict(self,feat):

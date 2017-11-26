@@ -1,12 +1,14 @@
 
 import numpy as np
 
-def silent(frame,stdthresh = 400):
+def silent(frame,thresh = 5000):
 	assert len(frame.shape) == 1, "multidimensional frame in silent()"
-	return frame.std() < stdthresh
+	return frame.max() < thresh
 
 
 def blocks(data, ws=256, stride=128, rem_silence=True, n=None):
+
+	MAX_AMP = 16384.0
 
 	assert (type(data).__module__ == np.__name__) and (data.dtype == 'float64'), "audio must have float64 type"
 
@@ -17,6 +19,11 @@ def blocks(data, ws=256, stride=128, rem_silence=True, n=None):
 	assert ws % 2 == 0, "window size should be even"
 	assert stride > 0, "stride cannot be zero"
 	assert data.shape[0] >= ws , "insufficient data"
+
+	# normalize volume
+	mx = data.max() + 1e-6
+	fact = MAX_AMP / mx
+	data = data * fact
 
 	sz = len(data) - ws 
 	nw = sz // stride + 1
