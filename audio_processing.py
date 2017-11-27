@@ -1,7 +1,7 @@
 
 import numpy as np
 
-def silent(frame,thresh = 5000):
+def silent(frame,thresh = 4000):
 	assert len(frame.shape) == 1, "multidimensional frame in silent()"
 	return frame.max() < thresh
 
@@ -146,6 +146,7 @@ def mel_filter_power(powerspec, bins):
 	nfilt = bins.shape[0] - 2
 
 	filter_energies = np.zeros((nsamples,nfilt),dtype='float64')
+
 
 	for i in range(1,nfilt+1):
 		for j in range(bins[i-1],bins[i]):

@@ -79,7 +79,7 @@ class AudioClassifier:
 		return train_feat, train_class, test_feat, test_class
 
 	def train(self,feat,targClass):
-		self.__clf__ = MLPClassifier(solver='lbfgs', alpha = 0.00001, random_state=1,hidden_layer_sizes=(self.__nclasses__*4,self.__nclasses__*4))
+		self.__clf__ = MLPClassifier(solver='lbfgs', alpha = 0.000001,max_iter=2000, random_state=1,hidden_layer_sizes=(self.__nclasses__*4,self.__nclasses__*4))
 		# self.__clf__ = svm.SVC(kernel='rbf')
 		self.__clf__.fit(feat,targClass)
 

@@ -53,6 +53,14 @@ def normalize(audio16,threshold=400):
 	return audio16
 
 
+def twosComp(data16):
+
+	for i in range(len(data16)):
+		if data16[i] < 0:
+			data16[i] = 65536 + data16[i]
+
+	return data16
+
 def recordAudio():
 
 	p = pyaudio.PyAudio()
@@ -74,16 +82,21 @@ def recordAudio():
 		audio16.extend(chunk16)
 
 	print("Finished Recording")
+	print("Processing audio ...")
 	audio16 = normalize(audio16)
+	audio16 = twosComp(audio16)
+	audio16 = list('{:016b}'.format(i) for i in audio16)
+	print(audio16[100:150])
+	binAudio =  b''.join(binAudio)
 	stream.stop_stream()
 	stream.close()
 	p.terminate()
 
-	# wf = wave.open(WAVE_OUTPUT_FILENAME, 'wb')
-	# wf.setnchannels(CHANNELS)
-	# wf.setsampwidth(p.get_sample_size(FORMAT))
-	# wf.setframerate(RATE)
-	# wf.writeframes(frames)
-	# wf.close()
+	wf = wave.open(WAVE_OUTPUT_FILENAME, 'wb')
+	wf.setnchannels(CHANNELS)
+	wf.setsampwidth(p.get_sample_size(FORMAT))
+	wf.setframerate(RATE)
+	wf.writeframes(binAudio)
+	wf.close()
 
 recordAudio()

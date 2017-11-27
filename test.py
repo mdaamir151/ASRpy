@@ -2,9 +2,9 @@
 
 from audio_class import AudioClassifier
 
-files = ['aariz.wav','english.wav','vf3-08.wav','woman.wav','shab.wav','maaroof.wav']
+files = ['brian.wav','amy.wav','emma.wav','eric.wav','joey.wav','kimberly.wav']
 ws = 4096
-nfilt = 120
+nfilt = 150
 stride = 128
 trainTestRatio = 0.8
 
@@ -22,6 +22,12 @@ print("misclassification stat for test set: ",acl.misClassStat(test_feat,test_cl
 
 
 print("predicting ....")
-feat = acl.getnFeatVecs('marooft.wav',n=20)
-p = acl.predict(feat)
-print(list(files[i] for i in p))
+feat = acl.getnFeatVecs('kimberlyt.wav',n=50)
+p = list(acl.predict(feat))
+
+cl = set(p)
+# print(cl)
+for i in cl:
+	print(" {} : {} ".format(files[i],p.count(i)))
+
+# print(list(files[i] for i in p))
